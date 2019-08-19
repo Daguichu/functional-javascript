@@ -57,3 +57,69 @@ function invoker(name, method) {
     return null;
   };
 }
+
+function uniqueString(len) {
+  return Math.random()
+    .toString(36)
+    .substr(2, len);
+}
+
+function uniqueString(prefix) {
+  return [prefix, new Data().getTime()].join("");
+}
+
+function makeUniqueStringFunction(start) {
+  const count = start;
+
+  return function(value) {
+    return [value, count++].join("");
+  };
+}
+
+var nums = [1, 2, 3, null, 5];
+
+nums.reduce((pre, next) => pre * next);
+
+function fnull(fn, ...args) {
+  const defaults = args;
+
+  return function(...arr) {
+    const args = arr.map((e, i) => {
+      return e || defaults[i];
+    });
+    fn.apply(null, args);
+  };
+}
+
+function defaults(d) {
+  return function(o, k) {
+    var val = fnull(alwas, d[k]);
+    return o && val(o[k]);
+  };
+}
+
+function doSomething(config) {
+  var lookup = defaults({ critical: 108 });
+
+  return lookup(config, "critical");
+}
+
+function checker(...args) {
+  return function(obj) {
+    return args.reduce((prev, next) => {
+      if (next(obj)) {
+        return prev;
+      }
+      prev.push(next.message);
+    }, []);
+  };
+}
+
+function valiator(message, fn) {
+  var f = function(...args) {
+    return fn.apply(fn, args);
+  };
+
+  f.message = message;
+  return f;
+}
